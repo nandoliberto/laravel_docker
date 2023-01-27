@@ -1,0 +1,48 @@
+version: '3'
+
+services:
+    laravel-app:
+        build: .
+        ports:
+            - 8080:80
+        volumes:
+            - ./src/:/usr/share/nginx
+        networks:
+            - laraDocker
+        depends_on:
+            - mysql-app
+            - redis
+            - mailhog
+
+    redis:
+        image: redis
+        ports:
+            - 6379:6379
+        networks:
+            - laraDocker
+
+    mailhog:
+        image: mailhog/mailhog
+        ports:
+            - 8025:8025
+        networks:
+            - laraDocker
+
+    mysql-app:
+        image: mysql:5.7
+        restart: always
+        tty: true
+        ports:
+            - 3306:3306
+        volumes:
+            - /home/fernando/Documentos/new_mysql:/var/lib/mysql
+        environment:
+            - MYSQL_DATABASE=app
+            - MYSQL_PASSWORD=root
+            - MYSQL_ROOT_PASSWORD=root
+        networks:
+            - laraDocker
+
+networks:
+    laraDocker:
+        driver: bridge
